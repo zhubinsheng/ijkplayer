@@ -118,7 +118,7 @@
 #define FFP_IO_STAT_STEP (50 * 1024)
 
 ///<Fixme(tbago)    add rtsp real time support
-#define FOR_RTSP_REAL_TIME_SUPPORT
+//#define FOR_RTSP_REAL_TIME_SUPPORT
 
 #define FFP_BUF_MSG_PERIOD (3)
 
