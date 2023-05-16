@@ -1,7 +1,7 @@
 # ijkplayer
 test
 Video player based on [ffplay](http://ffmpeg.org)
-
+chore: 修正版本号并移除多余的CI
 [![iOS Release](https://github.com/FlutterPlayer/ijkplayer/actions/workflows/ios_release.yml/badge.svg)](https://github.com/FlutterPlayer/ijkplayer/actions/workflows/ios_release.yml) [![Android Release](https://github.com/FlutterPlayer/ijkplayer/actions/workflows/android_release.yml/badge.svg)](https://github.com/FlutterPlayer/ijkplayer/actions/workflows/android_release.yml)
  
 本项目是基于 https://github.com/befovy/ijkplayer 的衍生修改版本 在原来的基础上目前修改了 ios上仅支持arm64指令编译 最低系统版本仅支持 ios11 android的ndk版本升级到ndk21版本支持最低 platform api是16 使用本项目前请注意 如果需要了解项目的一些基本情况和文档 请参阅 https://fplayer.dev 网站。谢谢！
