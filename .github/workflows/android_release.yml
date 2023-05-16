@@ -48,7 +48,7 @@ jobs:
       run: |
         export ANDROID_NDK=$ANDROID_HOME/ndk/21.1.6352462/
         ./gradlew build
-        ./gradlew -PNEXUS_PASSWORD=${NEXUS_PASSWORD} :fijkplayer-full:uploadArchives
+        ./gradlew :fijkplayer-full:assemble
         zip -r Symbols.zip fijkplayer-full/build/intermediates/cmake/release/obj
 
     - name: Extract tag name
@@ -66,5 +66,5 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         name: Release ${{ steps.tag.outputs.result }}
         draft: false
-        artifacts: "./android/ijkplayer/Symbols.zip"
+        artifacts: "./android/ijkplayer/Symbols.zip,./android/ijkplayer/fijkplayer-full/build/outputs/aar/fijkplayer-full-debug.aar"
         allowUpdates: true
