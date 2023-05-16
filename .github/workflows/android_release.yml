@@ -48,7 +48,7 @@ jobs:
       run: |
         export ANDROID_NDK=$ANDROID_HOME/ndk/21.1.6352462/
         ./gradlew build
-        ./gradlew -PNEXUS_PASSWORD=${NEXUS_PASSWORD} :fijkplayer-full:uploadArchives
+
         zip -r Symbols.zip fijkplayer-full/build/intermediates/cmake/release/obj
 
     - name: Extract tag name
