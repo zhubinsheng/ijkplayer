@@ -117,9 +117,6 @@
 
 #define FFP_IO_STAT_STEP (50 * 1024)
 
-///<Fixme(tbago)    add rtsp real time support
-//#define FOR_RTSP_REAL_TIME_SUPPORT
-
 #define FFP_BUF_MSG_PERIOD (3)
 
 // static const AVOption ffp_context_options[] = ...
@@ -363,10 +360,8 @@ static int packet_queue_get_or_buffering(FFPlayer *ffp, PacketQueue *q, AVPacket
         if (new_packet < 0)
             return -1;
         else if (new_packet == 0) {
-#ifndef FOR_RTSP_REAL_TIME_SUPPORT
             if (q->is_buffer_indicator && !*finished)
                 ffp_toggle_buffering(ffp, 1);
-#endif            
             new_packet = packet_queue_get(q, pkt, 1, serial);
             if (new_packet < 0)
                 return -1;
@@ -734,12 +729,10 @@ static Frame *frame_queue_peek(FrameQueue *f)
     return &f->queue[(f->rindex + f->rindex_shown) % f->max_size];
 }
 
-#ifndef FOR_RTSP_REAL_TIME_SUPPORT
 static Frame *frame_queue_peek_next(FrameQueue *f)
 {
     return &f->queue[(f->rindex + f->rindex_shown + 1) % f->max_size];
 }
-#endif
 
 static Frame *frame_queue_peek_last(FrameQueue *f)
 {
@@ -1286,7 +1279,6 @@ static void step_to_next_frame_l(FFPlayer *ffp)
         stream_toggle_pause_l(ffp, 0);
 }
 
-#ifndef FOR_RTSP_REAL_TIME_SUPPORT
 static double compute_target_delay(FFPlayer *ffp, double delay, VideoState *is)
 {
     double sync_threshold, diff = 0;
@@ -1341,7 +1333,6 @@ static void update_video_pts(VideoState *is, double pts, int64_t pos, int serial
     set_clock(&is->vidclk, pts, serial);
     sync_clock_to_slave(&is->extclk, &is->vidclk);
 }
-#endif
 
 /* called to display each frame */
 static void video_refresh(FFPlayer *opaque, double *remaining_time)
@@ -1369,15 +1360,13 @@ retry:
         if (frame_queue_nb_remaining(&is->pictq) == 0) {
             // nothing to do, no picture to display in the queue
         } else {
-#ifndef FOR_RTSP_REAL_TIME_SUPPORT
             double last_duration, duration, delay;
-#endif
             Frame *vp, *lastvp;
 
             /* dequeue the picture */
             lastvp = frame_queue_peek_last(&is->pictq);
             vp = frame_queue_peek(&is->pictq);
-#ifndef FOR_RTSP_REAL_TIME_SUPPORT
+
             if (vp->serial != is->videoq.serial) {
                 frame_queue_next(&is->pictq);
                 goto retry;
@@ -1444,10 +1433,10 @@ retry:
                     }
                 }
             }
-#endif
+
             frame_queue_next(&is->pictq);
             is->force_refresh = 1;
-#ifndef FOR_RTSP_REAL_TIME_SUPPORT
+
             SDL_LockMutex(ffp->is->play_mutex);
             if (is->step) {
                 is->step = 0;
@@ -1455,7 +1444,6 @@ retry:
                     stream_update_pause_l(ffp);
             }
             SDL_UnlockMutex(ffp->is->play_mutex);
-#endif
         }
 display:
         /* display picture */
@@ -2879,10 +2867,6 @@ static int stream_component_open(FFPlayer *ffp, int stream_index)
     if (stream_index < 0 || stream_index >= ic->nb_streams)
         return -1;
     avctx = avcodec_alloc_context3(NULL);
-#if 1
-    //set decoder as low deday
-    avctx->flags |=  (1 << 19);//CODEC_FLAG_LOW_DELAY      
-#endif
     if (!avctx)
         return AVERROR(ENOMEM);
 
@@ -3160,11 +3144,7 @@ static int read_thread(void *arg)
         goto fail;
     }
     ic->interrupt_callback.callback = decode_interrupt_cb;
-#ifdef FOR_RTSP_REAL_TIME_SUPPORT
-    ic->interrupt_callback.opaque = ffp;
-#else
     ic->interrupt_callback.opaque = is;
-#endif
     if (!av_dict_get(ffp->format_opts, "scan_all_pmts", NULL, AV_DICT_MATCH_CASE)) {
         av_dict_set(&ffp->format_opts, "scan_all_pmts", "1", AV_DICT_DONT_OVERWRITE);
         scan_all_pmts_set = 1;

@@ -6,14 +6,6 @@ chore: 修正版本号并移除多余的CI
  
 本项目是基于 https://github.com/befovy/ijkplayer 的衍生修改版本 在原来的基础上目前修改了 ios上仅支持arm64指令编译 最低系统版本仅支持 ios11 android的ndk版本升级到ndk21版本支持最低 platform api是16 使用本项目前请注意 如果需要了解项目的一些基本情况和文档 请参阅 https://fplayer.dev 网站。谢谢！
 
-![](https://github.com/befovy/ijkplayer/workflows/Android%20CI/badge.svg?branch=master)
-
-### 测试
-
-
-
-
-
 ### Download
 
 - Android:
